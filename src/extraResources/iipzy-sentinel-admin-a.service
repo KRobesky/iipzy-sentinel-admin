@@ -1,0 +1,22 @@
+[Unit]
+Description=Node.js iipzy-sentinel-admin 
+
+[Service]
+ExecStart=/usr/bin/node /home/pi/iipzy-sentinel-admin-a/iipzy-sentinel-admin/src/index.js
+# Required on some systems
+#WorkingDirectory=/home/pi/iipzy-sentinel-admin-a/iipzy-sentinel-admin
+Restart=always
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+# Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iipzy-sentinel-admin
+#User=<alternate user>
+User=pi
+#Group=<alternate group>
+Group=pi
+Environment=NODE_ENV=production PORT=8004
+
+[Install]
+WantedBy=multi-user.target
