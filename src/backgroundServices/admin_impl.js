@@ -235,13 +235,12 @@ async function restartService(serviceDirectory, serviceName) {
     }
   }
   if (iipzyService) {
-    const postFix =
-      iipzyService.indexOf(serviceDirectory + "-a") != -1 ? "a" : "b";
-    log("restartService: postFix = " + postFix, "info");
+    const suffix = iipzyService.indexOf(serviceDirectory + "-a") != -1 ? "a" : "b";
+    log("restartService: suffix = " + suffix, "info");
     await spawnAsync("sudo", [
       "systemctl",
       "restart",
-      serviceName + "-" + postFix
+      serviceName + "-" + suffix
     ]);
   }
 }
@@ -249,7 +248,7 @@ async function restartService(serviceDirectory, serviceName) {
 function sendLogsAsync() {
   return new Promise(async (resolve, reject) => {
     setAdminStatus("sending Sentinel logs");
-    await sendLogFiles("appliance", "iipzy-pi");
+    await sendLogFiles("iipzy-pi", "iipzy-pi");
     setAdminStatus("sending Sentinel Admin logs");
     await sendLogFiles("admin", "iipzy-sentinel-admin");
     setAdminStatus("sending Updater logs");
