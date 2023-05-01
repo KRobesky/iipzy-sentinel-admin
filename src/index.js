@@ -22,8 +22,6 @@ require("./startup/routes")(app);
 const userDataPath = "/etc/iipzy";
 let configFile = null;
 
-let serverAddress = undefined;
-let clientToken = undefined;
 let logLevel = undefined;
 
 let server = null;
@@ -62,13 +60,20 @@ async function main() {
   configFile = new ConfigFile(userDataPath, Defs.configFilename);
   await configFile.init();
 
-  serverAddress = configFile.get("serverAddress");
-  http.setBaseURL(serverAddress + ":" + Defs.port_server);
-
-  clientToken = configFile.get("clientToken");
-
   logLevel = configFile.get("logLevel");
   if (logLevel) setLogLevel(logLevel);
+
+  // wait forever to get a client token.
+  while (true) {
+    const clientToken = configFile.get("clientToken");
+    if (clientToken) {
+      http.setClientTokenHeader(clientToken);
+      break;
+    }
+    await sleep(1000);
+  }
+
+  http.setBaseURL(configFile.get("serverAddress") + ":" + Defs.port_server);
 
   configFile.watch(configWatchCallback);
 
@@ -84,23 +89,6 @@ main();
 
 function configWatchCallback() {
   log("configWatchCallback", "main", "info");
-
-  clientToken_ = configFile.get("clientToken");
-  if (clientToken_ !== clientToken) {
-    log(
-      "configWatchCallback: clientToken change: old = " +
-        clientToken +
-        ", new = " +
-        clientToken_,
-      "main",
-      "info"
-    );
-
-    if (clientToken_) {
-      clientToken = clientToken_;
-      http.setClientTokenHeader(clientToken);
-    }
-  }
 
   // handle log level change.
   const logLevel_ = configFile.get("logLevel");
