@@ -31,7 +31,7 @@ let server = null;
 let createServerTries = 6;
 function createServer() {
   log("createServer", "strt", "info");
-  const port = 8004;
+  const port = Defs.port_sentinel_admin;
   server = http_
     .createServer(app)
     .listen(port, () => {
@@ -63,7 +63,7 @@ async function main() {
   await configFile.init();
 
   serverAddress = configFile.get("serverAddress");
-  http.setBaseURL(serverAddress);
+  http.setBaseURL(serverAddress + ":" + Defs.port_server);
 
   clientToken = configFile.get("clientToken");
 
@@ -84,24 +84,6 @@ main();
 
 function configWatchCallback() {
   log("configWatchCallback", "main", "info");
-
-  // handle server address change.
-  const serverAddress_ = configFile.get("serverAddress");
-  if (serverAddress_ !== serverAddress) {
-    log(
-      "configWatchCallback: serverAddress change: old = " +
-        serverAddress +
-        ", new = " +
-        serverAddress_,
-      "main",
-      "info"
-    );
-
-    if (serverAddress_) {
-      serverAddress = serverAddress_;
-      http.setBaseURL(serverAddress);
-    }
-  }
 
   clientToken_ = configFile.get("clientToken");
   if (clientToken_ !== clientToken) {
