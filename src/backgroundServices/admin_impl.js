@@ -168,7 +168,7 @@ async function doReboot() {
 async function doRestartSentinel() {
   setAdminStatus("restarting sentinel");
   await sleep(5 * 1000);
-  await restartService("iipzy-service", "iipzy-pi");
+  await restartService("iipzy-core", "iipzy-core");
   setAdminStatus("done");
 }
 
@@ -248,7 +248,7 @@ async function restartService(serviceDirectory, serviceName) {
 function sendLogsAsync() {
   return new Promise(async (resolve, reject) => {
     setAdminStatus("sending Sentinel logs");
-    await sendLogFiles("iipzy-pi", "iipzy-pi");
+    await sendLogFiles("iipzy-core", "iipzy-core");
     setAdminStatus("sending Sentinel Admin logs");
     await sendLogFiles("admin", "iipzy-sentinel-admin");
     setAdminStatus("sending Updater logs");
